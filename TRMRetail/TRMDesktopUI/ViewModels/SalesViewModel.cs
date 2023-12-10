@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TRMDesktopUI.ViewModels
 {
-	internal class SalesViewModel
+	public class SalesViewModel
 	{
 	}
 }

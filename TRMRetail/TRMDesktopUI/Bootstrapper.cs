@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using TRMDesktopUI.ViewModels;
 
 namespace TRMDesktopUI
@@ -15,23 +16,25 @@ namespace TRMDesktopUI
 		#region FIELDS
 		private readonly SimpleContainer _container = new SimpleContainer();
 
-		public Bootstrapper(SimpleContainer container)
-		{
-			_container = container;
-		}
-
 		#endregion
 
-		protected override void OnStartup(object sender, StartupEventArgs e)
+		public Bootstrapper()
 		{
-			Task.Run(() => DisplayRootViewForAsync<ShellViewModel>()).Wait();
+			Initialize();
+
+			//ConventionManager.AddElementConvention<PasswordBox>(
+			//PasswordBoxHelper.BoundPasswordProperty,
+			//"Password",
+			//"PasswordChanged");
 		}
+
 
 		protected override void Configure()
 		{
 			_container
 				.Instance(_container);
-				//.PerRequest<IProductEndPoint, ProductEndPoint>();
+
+			//.PerRequest<IProductEndPoint, ProductEndPoint>();
 
 			_container
 					.Singleton<IWindowManager, WindowManager>()
@@ -47,6 +50,11 @@ namespace TRMDesktopUI
 				.ForEach(viewModelType => _container.RegisterPerRequest(
 					viewModelType, viewModelType.ToString(), viewModelType));
 
+		}
+
+		protected override void OnStartup(object sender, StartupEventArgs e)
+		{
+			DisplayRootViewFor<ShellViewModel>();
 		}
 
 		protected override object GetInstance(Type service, string key)
