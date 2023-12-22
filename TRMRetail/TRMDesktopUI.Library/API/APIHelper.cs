@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using TRMDesktopUI.Models;
+using TRMDesktopUI.Library.Models;
 
-namespace TRMDesktopUI.Helpers
+namespace TRMDesktopUI.Library.API
 {
 	public sealed class APIHelper : IAPIHelper
 	{
@@ -64,7 +65,7 @@ namespace TRMDesktopUI.Helpers
 			}
 		}
 
-		public async Task/*<LoggedInUserModel>*/ GetLoggedInUserInfo(string token)
+		public async Task<LoggedInUserModel> GetLoggedInUserInfo(string token)
 		{
 			IEnumerable<int> userIds = Enumerable.Range(1, 20);
 			apiClient.DefaultRequestHeaders.Clear();
@@ -84,7 +85,7 @@ namespace TRMDesktopUI.Helpers
 					_LoggedInUserModel.LastName = result.LastName;
 					_LoggedInUserModel.Id = result.Id;
 					_LoggedInUserModel.Token = token;
-					//return result;
+					return result;
 				}
 				else
 					throw new InvalidOperationException(response.ReasonPhrase);

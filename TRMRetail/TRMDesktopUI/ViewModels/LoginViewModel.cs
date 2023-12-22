@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TRMDesktopUI.Helpers;
-using TRMDesktopUI.Models;
+using TRMDesktopUI.Library.API;
+using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
 {
