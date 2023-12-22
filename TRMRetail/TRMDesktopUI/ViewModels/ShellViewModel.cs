@@ -1,14 +1,9 @@
 ﻿using Caliburn.Micro;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using TRMDesktopUI.EventModels;
 
 namespace TRMDesktopUI.ViewModels
 {
-	public class ShellViewModel : Conductor<object>//, IHandle<LogOnEvent>
+	public class ShellViewModel : Conductor<object>, IHandle<LogOnEvent>
 	{
 		#region Fields
 		private readonly IEventAggregator _events;
@@ -17,23 +12,29 @@ namespace TRMDesktopUI.ViewModels
 
 		#endregion
 
-		public ShellViewModel(LoginViewModel loginViewModel)
+		//public ShellViewModel(LoginViewModel loginViewModel)
+		//{
+		//	this.loginViewModel = loginViewModel;
+		//	ActivateItem(this.loginViewModel);
+		//}
+
+		public ShellViewModel(
+							  IEventAggregator events,
+							  SalesViewModel salesViewModel)
 		{
-			this.loginViewModel = loginViewModel;
-			ActivateItem(this.loginViewModel);
+			_events = events;
+			_salesViewModel = salesViewModel;
+
+			_events.Subscribe(this);
+			ActivateItem(IoC.Get<SalesViewModel>());
+		}
+
+		public void Handle(LogOnEvent message)
+		{
+			ActivateItem(_salesViewModel);
 		}
 
 
-		//public ShellViewModel(
-		//					  IEventAggregator events,
-		//					  SalesViewModel salesViewModel)
-		//{
-		//	_events = events;
-		//	_salesViewModel = salesViewModel;
-
-		//	//_events.SubscribeOnPublishedThread(this);
-		//	//ActivateItemAsync(IoC.Get<SalesViewModel>());
-		//}
 
 		//public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
 		//{

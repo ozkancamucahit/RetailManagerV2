@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels

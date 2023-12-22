@@ -1,9 +1,7 @@
 ﻿using Caliburn.Micro;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using TRMDesktopUI.EventModels;
 using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Models;
 
@@ -98,7 +96,7 @@ namespace TRMDesktopUI.ViewModels
 				AuthenticatedUser result = await _apiHelper.Authenticate(UserName, Password);
 				await _apiHelper.GetLoggedInUserInfo(result.access_token);
 
-				await _events.PublishOnUIThreadAsync(new LogOnEvent());
+				_events.PublishOnUIThread(new LogOnEvent());
 			}
 			catch (Exception ex)
 			{
