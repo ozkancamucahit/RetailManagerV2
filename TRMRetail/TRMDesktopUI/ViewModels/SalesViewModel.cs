@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using TRMDesktopUI.Library.API;
+using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.ViewModels
@@ -112,11 +113,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private decimal CalculateSubTotal()
-		{
-			return Cart.Sum(M => M.Product.RetailPrice * M.QuantityInCart);
-		}
-
 		public string Total
 		{
 			get
@@ -136,14 +132,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private decimal CalculateTax()
-		{
-			decimal taxRate = _configHelper.GetTaxRate() / 100;
-			return Cart
-					.Where(m => m.Product.IsTaxable)
-					.Sum(M => M.Product.RetailPrice * M.QuantityInCart * taxRate);
-		}
-
+		
 
 		#endregion
 
@@ -157,6 +146,21 @@ namespace TRMDesktopUI.ViewModels
 
 
 		#region Funcs
+
+		private decimal CalculateSubTotal()
+		{
+			return Cart.Sum(M => M.Product.RetailPrice * M.QuantityInCart);
+		}
+
+		private decimal CalculateTax()
+		{
+			decimal taxRate = _configHelper.GetTaxRate() / 100;
+			return Cart
+					.Where(m => m.Product.IsTaxable)
+					.Sum(M => M.Product.RetailPrice * M.QuantityInCart * taxRate);
+		}
+
+
 		public void AddToCart()
 		{
 
