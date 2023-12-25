@@ -13,6 +13,7 @@ namespace TRMDesktopUI.ViewModels
 		#region Fields
 		private BindingList<ProductModel> _products;
 		private IProductEndPoint _productEndPoint;
+		private ISaleEndPoint _saleEndPoint;
 		private IConfigHelper _configHelper;
 
 		public BindingList<ProductModel> Products
@@ -91,16 +92,6 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		public bool CanCheckOut
-		{
-			get
-			{
-				bool output = false;
-
-				return output;
-			}
-		}
-
 
 		public string SubTotal
 		{
@@ -137,10 +128,11 @@ namespace TRMDesktopUI.ViewModels
 		#endregion
 
 		#region CTOR
-		public SalesViewModel(IProductEndPoint productEndPoint, IConfigHelper configHelper)
+		public SalesViewModel(IProductEndPoint productEndPoint, IConfigHelper configHelper, ISaleEndPoint saleEndPoint)
 		{
 			_productEndPoint = productEndPoint;
 			_configHelper = configHelper;
+			_saleEndPoint = saleEndPoint;
 		}
 		#endregion
 
@@ -154,10 +146,13 @@ namespace TRMDesktopUI.ViewModels
 
 		private decimal CalculateTax()
 		{
+			decimal taxAmount = 0;
 			decimal taxRate = _configHelper.GetTaxRate() / 100;
-			return Cart
+			taxAmount = Cart
 					.Where(m => m.Product.IsTaxable)
 					.Sum(M => M.Product.RetailPrice * M.QuantityInCart * taxRate);
+
+			return taxAmount;
 		}
 
 
@@ -189,6 +184,7 @@ namespace TRMDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => Cart);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => Tax);
+			NotifyOfPropertyChange(() => CanCheckOut);
 		}
 
 		public void RemoveFromCart()
@@ -196,11 +192,42 @@ namespace TRMDesktopUI.ViewModels
 			NotifyOfPropertyChange(() => SubTotal);
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckOut);
 
 		}
 
-		public void CheckOut()
+
+		public bool CanCheckOut
 		{
+			get
+			{
+				bool output = false;
+
+				if (Cart.Count > 0)
+				{
+					output = true;
+				}
+
+				return output;
+			}
+		}
+
+		public async Task CheckOut()
+		{
+			//TODO: POST salemodel to API
+			SaleModel sale = new SaleModel();
+
+			foreach (var item in Cart)
+			{
+				sale.SaleDetails.Add(new SaleDetail()
+				{
+					ProductId = item.Product.Id,
+					Quantity = item.QuantityInCart
+				});
+			}
+
+			await _saleEndPoint.PostSale(sale);
+
 
 		}
 

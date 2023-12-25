@@ -8,7 +8,7 @@ namespace TRMDesktopUI.ViewModels
 		#region Fields
 		private readonly IEventAggregator _events;
 		private readonly SalesViewModel _salesViewModel;
-		private readonly LoginViewModel loginViewModel;
+		private readonly LoginViewModel _loginViewModel;
 
 		#endregion
 
@@ -20,18 +20,20 @@ namespace TRMDesktopUI.ViewModels
 
 		public ShellViewModel(
 							  IEventAggregator events,
-							  SalesViewModel salesViewModel)
+							  //SalesViewModel salesViewModel
+							  LoginViewModel loginViewModel
+			)
 		{
 			_events = events;
-			_salesViewModel = salesViewModel;
-
+			//_salesViewModel = salesViewModel;
+			_loginViewModel = loginViewModel;
 			_events.Subscribe(this);
-			ActivateItem(IoC.Get<SalesViewModel>());
+			ActivateItem(IoC.Get<LoginViewModel>());
 		}
 
 		public void Handle(LogOnEvent message)
 		{
-			ActivateItem(_salesViewModel);
+			ActivateItem(_loginViewModel);
 		}
 
 
