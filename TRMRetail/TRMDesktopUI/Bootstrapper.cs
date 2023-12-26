@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using TRMDesktopUI.Helpers;
 using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
@@ -22,10 +24,10 @@ namespace TRMDesktopUI
 		{
 			Initialize();
 
-			//ConventionManager.AddElementConvention<PasswordBox>(
-			//PasswordBoxHelper.BoundPasswordProperty,
-			//"Password",
-			//"PasswordChanged");
+			ConventionManager.AddElementConvention<PasswordBox>(
+			PasswordBoxHelper.BoundPasswordProperty,
+			"Password",
+			"PasswordChanged");
 		}
 
 
