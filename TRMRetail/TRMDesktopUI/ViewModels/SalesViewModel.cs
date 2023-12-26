@@ -106,7 +106,7 @@ namespace TRMDesktopUI.ViewModels
 			get
 			{
 				bool output = false;
-				if(SelectedCartItem != null && SelectedCartItem?.Product.QuantityInStock > 0)
+				if(SelectedCartItem != null && SelectedCartItem?.QuantityInCart > 0)
 				{
 					output = true;
 				}
@@ -230,12 +230,11 @@ namespace TRMDesktopUI.ViewModels
 				Cart.Remove(SelectedCartItem);
 			}
 
-
-
 			NotifyOfPropertyChange(() => SubTotal);
 			NotifyOfPropertyChange(() => Tax);
 			NotifyOfPropertyChange(() => Total);
 			NotifyOfPropertyChange(() => CanCheckOut);
+			NotifyOfPropertyChange(() => CanAddToCart);
 
 		}
 
@@ -270,7 +269,7 @@ namespace TRMDesktopUI.ViewModels
 			}
 
 			await _saleEndPoint.PostSale(sale);
-
+			await ResetSalesViewModel();
 
 		}
 
@@ -287,6 +286,18 @@ namespace TRMDesktopUI.ViewModels
 			base.OnViewLoaded(view);
 			await LoadProducts();
 		}
+
+		private async Task ResetSalesViewModel()
+		{
+			Cart = new BindingList<CartItemDisplayModel>();
+			await LoadProducts();
+
+			NotifyOfPropertyChange(() => SubTotal);
+			NotifyOfPropertyChange(() => Tax);
+			NotifyOfPropertyChange(() => Total);
+			NotifyOfPropertyChange(() => CanCheckOut);
+		}
+
 
 		#endregion
 

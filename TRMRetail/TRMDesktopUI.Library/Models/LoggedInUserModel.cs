@@ -24,7 +24,15 @@ namespace TRMDesktopUI.Library.Models
 		public string Token { get; set; }
 		#endregion
 
-
+		public void LogOffUser()
+		{
+			Token = String.Empty;
+			Id = String.Empty;
+			FirstName = String.Empty;
+			LastName = String.Empty;
+			EmailAddress = String.Empty;
+			CreatedDate = DateTime.MinValue;
+		}
 
 	}
 }
