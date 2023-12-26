@@ -1,22 +1,26 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
+using TRMDesktopUI.Models;
 
 namespace TRMDesktopUI.ViewModels
 {
 	public sealed class SalesViewModel : Screen
 	{
 		#region Fields
-		private BindingList<ProductModel> _products;
+		private BindingList<ProductDisplayModel> _products;
 		private IProductEndPoint _productEndPoint;
 		private ISaleEndPoint _saleEndPoint;
 		private IConfigHelper _configHelper;
+		private IMapper _mapper;
 
-		public BindingList<ProductModel> Products
+		public BindingList<ProductDisplayModel> Products
 		{
 			get { return _products; }
 			set
@@ -26,9 +30,9 @@ namespace TRMDesktopUI.ViewModels
 			}
 		}
 
-		private ProductModel _selectedRoduct;
+		private ProductDisplayModel _selectedRoduct;
 
-		public ProductModel SelectedProduct
+		public ProductDisplayModel SelectedProduct
 		{
 			get { return _selectedRoduct; }
 			set
@@ -41,9 +45,9 @@ namespace TRMDesktopUI.ViewModels
 		}
 
 
-		private BindingList<CartItemModel> _cart = new BindingList<CartItemModel>();
+		private BindingList<CartItemDisplayModel> _cart = new BindingList<CartItemDisplayModel>();
 
-		public BindingList<CartItemModel> Cart
+		public BindingList<CartItemDisplayModel> Cart
 		{
 			get { return _cart; }
 			set
@@ -128,11 +132,16 @@ namespace TRMDesktopUI.ViewModels
 		#endregion
 
 		#region CTOR
-		public SalesViewModel(IProductEndPoint productEndPoint, IConfigHelper configHelper, ISaleEndPoint saleEndPoint)
+		public SalesViewModel(
+			IProductEndPoint productEndPoint,
+			IConfigHelper configHelper,
+			ISaleEndPoint saleEndPoint,
+			IMapper mapper)
 		{
 			_productEndPoint = productEndPoint;
 			_configHelper = configHelper;
 			_saleEndPoint = saleEndPoint;
+			_mapper = mapper;
 		}
 		#endregion
 
@@ -159,17 +168,18 @@ namespace TRMDesktopUI.ViewModels
 		public void AddToCart()
 		{
 
-			CartItemModel existingModel = Cart.FirstOrDefault(m => m.Product == SelectedProduct);
+			CartItemDisplayModel existingModel = Cart.FirstOrDefault(m => m.Product == SelectedProduct);
 
 			if (existingModel != null)
 			{
 				existingModel.QuantityInCart += ItemQuantity;
-				Cart.Remove(existingModel);
-				Cart.Add(existingModel);
+				//Refresh the cart
+				//Cart.Remove(existingModel);
+				//Cart.Add(existingModel);
 			}
 			else
 			{
-				var item = new CartItemModel()
+				var item = new CartItemDisplayModel()
 				{
 					Product = SelectedProduct,
 					QuantityInCart = ItemQuantity
@@ -233,8 +243,10 @@ namespace TRMDesktopUI.ViewModels
 
 		private async Task LoadProducts()
 		{
+
 			var productsList = await _productEndPoint.GetProducts();
-			Products = new BindingList<ProductModel>(productsList.ToList());
+			var products = _mapper.Map<IEnumerable<ProductDisplayModel>>(productsList); 
+			Products = new BindingList<ProductDisplayModel>(products.ToList());
 		}
 
 		protected override async void OnViewLoaded(object view)
