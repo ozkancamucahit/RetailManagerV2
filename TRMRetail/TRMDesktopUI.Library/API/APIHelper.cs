@@ -42,6 +42,11 @@ namespace TRMDesktopUI.Library.API
 			apiClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
+		public void LogOffUser()
+		{
+			ApiClient.DefaultRequestHeaders.Clear();
+		}
+
 		public async Task<AuthenticatedUser> Authenticate(string userName, string password)
 		{
 			var data = new FormUrlEncodedContent(new[]
@@ -91,8 +96,5 @@ namespace TRMDesktopUI.Library.API
 					throw new InvalidOperationException(response.ReasonPhrase);
 			}
 		}
-
-
-
 	}
 }

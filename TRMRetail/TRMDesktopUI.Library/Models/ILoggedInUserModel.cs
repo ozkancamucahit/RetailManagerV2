@@ -11,6 +11,6 @@ namespace TRMDesktopUI.Library.Models
 		string Id { get; set; }
 		string LastName { get; set; }
 
-		void LogOffUser();
+		void ResetUserModel();
 	}
 }

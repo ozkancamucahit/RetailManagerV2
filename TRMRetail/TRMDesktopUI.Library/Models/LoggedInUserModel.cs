@@ -24,7 +24,7 @@ namespace TRMDesktopUI.Library.Models
 		public string Token { get; set; }
 		#endregion
 
-		public void LogOffUser()
+		public void ResetUserModel()
 		{
 			Token = String.Empty;
 			Id = String.Empty;
