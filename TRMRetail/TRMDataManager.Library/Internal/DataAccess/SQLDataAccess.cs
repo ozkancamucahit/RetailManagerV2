@@ -10,8 +10,14 @@ using Dapper;
 
 namespace TRMDataManager.Library.Internal.DataAccess
 {
-	internal sealed class SQLDataAccess
+	internal sealed class SQLDataAccess :IDisposable
 	{
+
+		#region FIELDS
+			private IDbConnection _dbConnection;
+			private IDbTransaction _dbTransaction;
+		#endregion
+
 		public string GetConnectionString(string name)
 		{
 			try
@@ -81,5 +87,56 @@ namespace TRMDataManager.Library.Internal.DataAccess
 			return RowsEffected > 0;
 
 		}
-	}
+
+
+		public void StartTransaction(string connStringName)
+		{
+			string connString = GetConnectionString(connStringName);
+
+			_dbConnection = new SqlConnection(connString);
+			_dbConnection.Open();
+			_dbTransaction = _dbConnection.BeginTransaction();
+		}
+
+		public void SaveDataInTransaction<T>(string storedProcedure, T parameters)
+		{
+			_dbConnection.Execute(
+			storedProcedure,
+			parameters,
+			commandType: CommandType.StoredProcedure,
+			transaction: _dbTransaction
+			);
+
+		}
+
+		public IEnumerable<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
+		{
+			var rows = _dbConnection.Query<T>(
+				storedProcedure,
+				parameters,
+				commandType: CommandType.StoredProcedure,
+				transaction: _dbTransaction
+				);
+
+			return rows;
+		}
+
+
+
+		public void CommitTransaction()
+		{
+			_dbTransaction?.Commit();
+			_dbConnection?.Close();
+		}
+
+		public void RollbackTransaction()
+		{
+			_dbTransaction?.Rollback();
+		}
+
+        public void Dispose()
+        {
+            CommitTransaction();
+        }
+    }
 }
