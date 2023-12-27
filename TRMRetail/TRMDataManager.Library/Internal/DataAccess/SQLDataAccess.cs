@@ -96,6 +96,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
 			_dbConnection = new SqlConnection(connString);
 			_dbConnection.Open();
 			_dbTransaction = _dbConnection.BeginTransaction();
+			isClosed = false;
 		}
 
 		public void SaveDataInTransaction<T>(string storedProcedure, T parameters)
@@ -121,22 +122,37 @@ namespace TRMDataManager.Library.Internal.DataAccess
 			return rows;
 		}
 
-
+		private bool isClosed = false;
 
 		public void CommitTransaction()
 		{
 			_dbTransaction?.Commit();
 			_dbConnection?.Close();
+			isClosed = true;
 		}
 
 		public void RollbackTransaction()
 		{
 			_dbTransaction?.Rollback();
+			isClosed = true;
 		}
 
         public void Dispose()
         {
-            CommitTransaction();
+            if (isClosed == false)
+			{
+				try
+				{
+					CommitTransaction();
+				}
+				catch 
+				{
+					//TODO : Log exception logic
+				}
+			}
+
+			_dbTransaction = null;
+			_dbConnection = null;
         }
     }
 }
