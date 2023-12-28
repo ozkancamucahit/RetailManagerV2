@@ -81,6 +81,14 @@ namespace TRMDataManager.Library.DataAccess
             #endregion
         }
 
+        public IEnumerable<SaleReportModel> GetSaleReport()
+        {
+            var sql = new SQLDataAccess();
+
+            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new {}, "TRMData");
+            return output;
+        }
+
 
         //public IEnumerable<ProductModel> GetProducts()
         //{

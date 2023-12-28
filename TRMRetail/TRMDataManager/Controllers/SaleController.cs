@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TRMDataManager.Library.DataAccess;
@@ -8,7 +9,7 @@ using TRMDataManager.Models;
 namespace TRMDataManager.Controllers
 {
 
-	//[Authorize]
+	[Authorize]
     public sealed class SaleController : ApiController
     {
 		[HttpPost]
@@ -21,5 +22,15 @@ namespace TRMDataManager.Controllers
 			return  Ok(saleModel);
 			//return Created<ProductData>();
 		}
+
+		[Route("SalesReport")]
+		public IEnumerable<SaleReportModel> GetSalesReport()
+		{
+
+			var saleData = new SaleData();
+			return saleData.GetSaleReport();
+
+		}
+
 	}
 }
