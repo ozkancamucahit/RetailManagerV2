@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Caliburn.Micro;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
@@ -19,6 +22,8 @@ namespace TRMDesktopUI.ViewModels
 		private ISaleEndPoint _saleEndPoint;
 		private IConfigHelper _configHelper;
 		private IMapper _mapper;
+		private readonly StatusInfoViewModel _status;
+		private readonly IWindowManager _windowManager;
 
 		public BindingList<ProductDisplayModel> Products
 		{
@@ -155,12 +160,16 @@ namespace TRMDesktopUI.ViewModels
 			IProductEndPoint productEndPoint,
 			IConfigHelper configHelper,
 			ISaleEndPoint saleEndPoint,
-			IMapper mapper)
+			IMapper mapper,
+			StatusInfoViewModel status,
+			IWindowManager windowManager)
 		{
 			_productEndPoint = productEndPoint;
 			_configHelper = configHelper;
 			_saleEndPoint = saleEndPoint;
 			_mapper = mapper;
+			_status = status;
+			_windowManager = windowManager;
 		}
 		#endregion
 
@@ -284,7 +293,29 @@ namespace TRMDesktopUI.ViewModels
 		protected override async void OnViewLoaded(object view)
 		{
 			base.OnViewLoaded(view);
-			await LoadProducts();
+			try
+			{
+				await LoadProducts();
+			}
+			catch (Exception ex)
+			{
+				dynamic settings = new ExpandoObject();
+				settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+				settings.ResizeMode = ResizeMode.NoResize;
+				settings.Title = "System Error";
+
+				if(ex.Message == "Unauthorized")
+				{
+					_status.UpdateMessage("Unauthorized Access", "You do not have the right permissions.");
+					_windowManager.ShowDialog(_status, null, settings);
+				}
+				else
+				{
+					_status.UpdateMessage("Fatal Exception", ex.Message);
+					_windowManager.ShowDialog(_status, null, settings);
+				}
+				TryClose();
+			}
 		}
 
 		private async Task ResetSalesViewModel()
