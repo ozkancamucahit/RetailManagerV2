@@ -6,7 +6,7 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Controllers
 {
-	//[Authorize]
+	[Authorize(Roles = "CASHIER")]
 	public sealed class ProductController : ApiController
 	{
 		[HttpGet]

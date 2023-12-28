@@ -12,6 +12,7 @@ namespace TRMDataManager.Controllers
 	[Authorize]
     public sealed class SaleController : ApiController
     {
+		[Authorize(Roles = "CASHIER")]
 		[HttpPost]
 		public async Task<IHttpActionResult> Post(SaleModel saleModel)
 		{
@@ -23,9 +24,12 @@ namespace TRMDataManager.Controllers
 			//return Created<ProductData>();
 		}
 
+
+		[Authorize(Roles ="ADMIN,MANAGER")]
 		[Route("SalesReport")]
 		public IEnumerable<SaleReportModel> GetSalesReport()
 		{
+			RequestContext.Principal.IsInRole("ADMIN");
 
 			var saleData = new SaleData();
 			return saleData.GetSaleReport();

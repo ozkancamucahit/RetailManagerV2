@@ -8,7 +8,8 @@ namespace TRMDataManager.Controllers
 	[Authorize]
 	public sealed class InventoryController : ApiController
     {
-
+		// user in admin OR manager
+		[Authorize(Roles ="MANAGER,ADMIN")]
 		[HttpGet]
 		public IEnumerable<InventoryModel> Get()
 		{
@@ -18,6 +19,9 @@ namespace TRMDataManager.Controllers
 
 		}
 
+		// User in both admin AND warehouse
+		[Authorize(Roles ="ADMIN")]
+		//[Authorize(Roles ="WarehouseWorker")]
 		[HttpPost] 
 		public void Post(InventoryModel item) 
 		{  
