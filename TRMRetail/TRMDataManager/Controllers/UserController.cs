@@ -2,10 +2,13 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.Security;
 using TRMDataManager.Library.DataAccess;
 using TRMDataManager.Library.Models;
 using TRMDataManager.Models;
@@ -17,7 +20,6 @@ namespace TRMDataManager.Controllers
     public class UserController : ApiController
     {
 
-		// GET: api/User/id
 		[HttpGet]
 		public IHttpActionResult GetById()
 		{
@@ -33,10 +35,10 @@ namespace TRMDataManager.Controllers
 
 		}
 
-		[Authorize(Roles ="ADMIN")]
+		[Authorize(Roles = "ADMIN")]
 		[HttpGet]
 		[Route("admin/users")]
-		public async Task<IHttpActionResult> GetAllusers()
+		public IHttpActionResult GetAllUsers()
 		{
 			IEnumerable<ApplicationUser> users;
 			IEnumerable<IdentityRole> roles;
@@ -61,7 +63,7 @@ namespace TRMDataManager.Controllers
 
 					foreach (IdentityUserRole r in user.Roles)
 					{
-						u.Roles.Add(r.RoleId, roles.Where( x => x.Id == r.RoleId).First().Name );
+						u.Roles.Add(r.RoleId, roles.Where(x => x.Id == r.RoleId).First().Name);
 					}
 					output.Add(u);
 
@@ -71,6 +73,60 @@ namespace TRMDataManager.Controllers
 
 			return Ok(output);
 		}
+
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpGet]
+		[Route("admin/roles")]
+		public IHttpActionResult GetAllRoles()
+		{
+			using (var context = new ApplicationDbContext())
+			{
+				var roles = context.Roles.ToDictionary(x => x.Id, x => x.Name);
+
+				return Ok(roles);
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost]
+		[Route("admin/roles/AddRole")]
+		public IHttpActionResult AddRole(UserRolePairModel request)
+		{
+			IdentityResult result;
+			using (var context = new ApplicationDbContext())
+			{
+				var userStore = new UserStore<ApplicationUser>(context);
+				var userManager = new UserManager<ApplicationUser>(userStore);
+
+
+				result = userManager.AddToRole(request.UserId, request.RoleName);
+			}
+
+			return Ok(result);
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost]
+		[Route("admin/roles/RemoveRole")]
+		public IHttpActionResult RemoveRole(UserRolePairModel request)
+		{
+			IdentityResult result;
+
+			using (var context = new ApplicationDbContext())
+			{
+				var userStore = new UserStore<ApplicationUser>(context);
+				var userManager = new UserManager<ApplicationUser>(userStore);
+
+
+				result = userManager.RemoveFromRole(request.UserId, request.RoleName);
+			}
+
+			return Ok(result);
+		}
+
+
+
 
 	}
 }

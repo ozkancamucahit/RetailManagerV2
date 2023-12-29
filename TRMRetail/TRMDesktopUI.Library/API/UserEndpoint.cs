@@ -36,23 +36,50 @@ namespace TRMDesktopUI.Library.API
 			}
 		}
 
-		//public async Task<IEnumerable<ProductModel>> GetProducts()
-		//{
+		public async Task<Dictionary<string, string>> GetAllRoles()
+		{
+			using (HttpResponseMessage response = await _aPIHelper.ApiClient.GetAsync("/api/User/admin/roles"))
+			{
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadAsAsync<Dictionary<string, string>>();
+					return result;
+				}
+				else
+				{
+					throw new InvalidOperationException(response.ReasonPhrase);
+				}
+			}
+		}
 
-		//	using (HttpResponseMessage response = await _apiHelper.ApiClient.GetAsync("/api/Product"))
-		//	{
-		//		if (response.IsSuccessStatusCode)
-		//		{
-		//			var result = await response.Content.ReadAsAsync<IEnumerable<ProductModel>>();
 
-		//			return result;
-		//		}
-		//		else
-		//			throw new InvalidOperationException(response.ReasonPhrase);
-		//	}
-		//	//return Enumerable.Empty<string>();
-		//}
+		public async Task AddUserToRole(string userId, string roleName)
+		{
 
+			var request = new { userId, roleName };
+
+			using (HttpResponseMessage response = await _aPIHelper.ApiClient.PostAsJsonAsync("/api/User/admin/roles/AddRole", request))
+			{
+				if (!response.IsSuccessStatusCode)
+				{
+					throw new InvalidOperationException(response.ReasonPhrase);
+				}
+			}
+		}
+		
+		public async Task RemoveUserFromRole(string userId, string roleName)
+		{
+
+			var request = new { userId, roleName };
+
+			using (HttpResponseMessage response = await _aPIHelper.ApiClient.PostAsJsonAsync("/api/User/admin/roles/RemoveRole", request))
+			{
+				if (!response.IsSuccessStatusCode)
+				{
+					throw new InvalidOperationException(response.ReasonPhrase);
+				}
+			}
+		}
 
 	}
 }
