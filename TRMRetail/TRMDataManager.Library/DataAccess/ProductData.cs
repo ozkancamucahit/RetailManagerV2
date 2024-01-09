@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,19 @@ namespace TRMDataManager.Library.DataAccess
 {
 	public sealed class ProductData
 	{
+		private readonly IConfiguration configuration;
+
+		public ProductData(IConfiguration configuration)
+		{
+			this.configuration = configuration;
+		}
+
 		public IEnumerable<ProductModel> GetProducts()
 		{
 			IEnumerable<ProductModel> result;
 			try
 			{
-				SQLDataAccess sql = new SQLDataAccess();
+				SQLDataAccess sql = new SQLDataAccess(configuration);
 
 				result = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "TRMData");
 			}
@@ -29,7 +37,7 @@ namespace TRMDataManager.Library.DataAccess
 
 		public ProductModel GetProductById(int id)
 		{
-			var sql = new SQLDataAccess();
+			var sql = new SQLDataAccess(configuration);
 
 			var result = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetById", new { Id = id}, "TRMData").FirstOrDefault();
 			return result;
