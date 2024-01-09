@@ -11,13 +11,22 @@ namespace TRMApi.Controllers
 	[Authorize]
 	public sealed class InventoryController : ControllerBase
 	{
-		// user in admin OR manager
-		[Authorize(Roles ="MANAGER,ADMIN")]
+		private readonly IConfiguration configuration;
+
+		#region CTOR
+		public InventoryController(IConfiguration configuration)
+        {
+			this.configuration = configuration;
+		}
+        #endregion
+
+        // user in admin OR manager
+        [Authorize(Roles ="MANAGER,ADMIN")]
 		[HttpGet]
 		public IEnumerable<InventoryModel> Get()
 		{
 
-			var inventoryData = new InventoryData();
+			var inventoryData = new InventoryData(configuration);
 			return inventoryData.GetInventory();
 
 		}
@@ -28,7 +37,7 @@ namespace TRMApi.Controllers
 		[HttpPost] 
 		public void Post(InventoryModel item) 
 		{  
-			InventoryData data = new InventoryData();
+			InventoryData data = new InventoryData(configuration);
 
 			data.SaveInventoryRecord(item);
 		}

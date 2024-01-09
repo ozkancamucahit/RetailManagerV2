@@ -12,10 +12,17 @@ namespace TRMApi.Controllers
 
 	public sealed class ProductController : ControllerBase
 	{
-		[HttpGet]
+		private readonly IConfiguration configuration;
+
+		public ProductController(IConfiguration configuration)
+        {
+			this.configuration = configuration;
+		}
+
+        [HttpGet]
 		public IEnumerable<ProductModel> Get()
 		{
-			ProductData data = new ProductData();
+			ProductData data = new ProductData(configuration);
 
 			IEnumerable<ProductModel> result = data.GetProducts();
 

@@ -21,12 +21,16 @@ namespace TRMApi.Controllers
 
 		private readonly ApplicationDbContext applicationdbcontext;
 		private readonly UserManager<IdentityUser> userManager;
+		private readonly IConfiguration configuration;
 
 		#region CTOR
-		public UserController (ApplicationDbContext applicationdbcontext, UserManager<IdentityUser> userManager)
+		public UserController (ApplicationDbContext applicationdbcontext, 
+			UserManager<IdentityUser> userManager,
+			IConfiguration configuration)
 		{
 			this.applicationdbcontext = applicationdbcontext;
 			this.userManager = userManager;
+			this.configuration = configuration;
 		}
         #endregion
 
@@ -34,7 +38,7 @@ namespace TRMApi.Controllers
         [HttpGet]
 		public IActionResult GetById()
 		{
-			var userData = new UserData();
+			var userData = new UserData(configuration);
 
 			string id = User.FindFirstValue(ClaimTypes.NameIdentifier); //RequestContext.Principal.Identity.GetUserId();
 			UserModel result = userData.GetUserById(id);
