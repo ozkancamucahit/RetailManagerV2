@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace TRMDataManager.Library.Internal.DataAccess
 {
@@ -16,13 +17,23 @@ namespace TRMDataManager.Library.Internal.DataAccess
 		#region FIELDS
 			private IDbConnection _dbConnection;
 			private IDbTransaction _dbTransaction;
+			private readonly IConfiguration configuration;
+
 		#endregion
 
-		public string GetConnectionString(string name)
+		#region CTOR
+		public SQLDataAccess(IConfiguration configuration)
+        {
+			this.configuration = configuration;
+		}
+        #endregion
+
+        public string GetConnectionString(string name)
 		{
 			try
 			{
-				return ConfigurationManager.ConnectionStrings[name].ConnectionString ?? String.Empty;
+				return configuration.GetConnectionString(name);
+				//return ConfigurationManager.ConnectionStrings[name].ConnectionString ?? String.Empty;
 			}
 			catch
 			{
