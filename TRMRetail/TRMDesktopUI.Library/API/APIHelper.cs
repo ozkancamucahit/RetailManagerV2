@@ -72,14 +72,19 @@ namespace TRMDesktopUI.Library.API
 
 		public async Task<LoggedInUserModel> GetLoggedInUserInfo(string token)
 		{
-			IEnumerable<int> userIds = Enumerable.Range(1, 20);
+			if (string.IsNullOrWhiteSpace(token))
+			{
+				throw new InvalidOperationException("ACCESS_TOKEN IS NULL");
+			}
+
+			//IEnumerable<int> userIds = Enumerable.Range(1, 20);
 			apiClient.DefaultRequestHeaders.Clear();
 			apiClient.DefaultRequestHeaders.Accept.Clear();
 			apiClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 			apiClient.DefaultRequestHeaders.Add("Authorization", String.Concat("Bearer ", token));
 			apiClient.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("RMClient", "1.1"));
 
-			using (HttpResponseMessage response = await apiClient.GetAsync("/api/User"))
+			using (HttpResponseMessage response = await apiClient.GetAsync("/api/User/GetById"))
 			{
 				if (response.IsSuccessStatusCode)
 				{
