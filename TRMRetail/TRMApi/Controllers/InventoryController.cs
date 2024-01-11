@@ -21,7 +21,7 @@ namespace TRMApi.Controllers
         #endregion
 
         // user in admin OR manager
-        [Authorize(Roles ="MANAGER,ADMIN")]
+        [Authorize(Roles ="Manager,Admin")]
 		[HttpGet]
 		public IEnumerable<InventoryModel> Get()
 		{
@@ -32,7 +32,7 @@ namespace TRMApi.Controllers
 		}
 
 		// User in both admin AND warehouse
-		[Authorize(Roles ="ADMIN")]
+		[Authorize(Roles ="Admin")]
 		//[Authorize(Roles ="WarehouseWorker")]
 		[HttpPost] 
 		public void Post(InventoryModel item) 

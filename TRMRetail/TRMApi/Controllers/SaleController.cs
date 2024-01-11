@@ -21,7 +21,7 @@ namespace TRMApi.Controllers
 		}
         #endregion
 
-        [Authorize(Roles = "CASHIER")]
+        [Authorize(Roles = "Cashier")]
 		[HttpPost]
 		public async Task<IActionResult> Post(SaleModel saleModel)
 		{
@@ -33,8 +33,9 @@ namespace TRMApi.Controllers
 		}
 
 
-		[Authorize(Roles = "ADMIN,MANAGER")]
+		[Authorize(Roles = "Admin,Manager")]
 		[Route("SalesReport")]
+		[HttpGet]
 		public IEnumerable<SaleReportModel> GetSalesReport()
 		{
 			var saleData = new SaleData(configuration);

@@ -15,7 +15,6 @@ namespace TRMApi.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 	[Authorize]
-	[Route("api/User")]
 	public class UserController : ControllerBase
 	{
 
@@ -36,6 +35,7 @@ namespace TRMApi.Controllers
 
 
         [HttpGet]
+		[Route("GetById")]
 		public IActionResult GetById()
 		{
 			var userData = new UserData(configuration);
@@ -50,7 +50,7 @@ namespace TRMApi.Controllers
 
 		}
 
-		[Authorize(Roles = "ADMIN")]
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		[Route("admin/users")]
 		public IActionResult GetAllUsers()
@@ -85,7 +85,7 @@ namespace TRMApi.Controllers
 		}
 
 
-		[Authorize(Roles = "ADMIN")]
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		[Route("admin/roles")]
 		public IActionResult GetAllRoles()
@@ -95,7 +95,7 @@ namespace TRMApi.Controllers
 			return Ok(roles);
 		}
 
-		[Authorize(Roles = "ADMIN")]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		[Route("admin/roles/AddRole")]
 		public async Task<IActionResult> AddRole(UserRolePairModel request)
@@ -108,7 +108,7 @@ namespace TRMApi.Controllers
 			return Ok(result);
 		}
 
-		[Authorize(Roles = "ADMIN")]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		[Route("admin/roles/RemoveRole")]
 		public async Task<IActionResult> RemoveRole(UserRolePairModel request)

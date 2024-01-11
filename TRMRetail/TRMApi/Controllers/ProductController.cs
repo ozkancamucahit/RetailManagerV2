@@ -8,7 +8,7 @@ namespace TRMApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	[Authorize(Roles = "CASHIER")]
+	[Authorize(Roles = "Cashier")]
 
 	public sealed class ProductController : ControllerBase
 	{
