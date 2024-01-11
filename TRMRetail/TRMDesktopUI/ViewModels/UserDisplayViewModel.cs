@@ -177,14 +177,14 @@ namespace TRMDesktopUI.ViewModels
 				if (ex.Message == "Unauthorized")
 				{
 					statusInfoViewModel.UpdateMessage("Unauthorized Access", "You do not have the right permissions.");
-					windowManager.ShowDialog(statusInfoViewModel, null, settings);
+					await windowManager.ShowDialogAsync(statusInfoViewModel, null, settings);
 				}
 				else
 				{
 					statusInfoViewModel.UpdateMessage("Fatal Exception", ex.Message);
-					windowManager.ShowDialog(statusInfoViewModel, null, settings);
+					await windowManager.ShowDialogAsync(statusInfoViewModel, null, settings);
 				}
-				TryClose();
+				TryCloseAsync();
 			}
 		}
 	}

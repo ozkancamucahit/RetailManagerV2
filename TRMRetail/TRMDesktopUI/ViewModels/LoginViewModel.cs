@@ -96,7 +96,7 @@ namespace TRMDesktopUI.ViewModels
 				AuthenticatedUser result = await _apiHelper.Authenticate(UserName, Password);
 				await _apiHelper.GetLoggedInUserInfo(result.access_token);
 
-				_events.PublishOnUIThread(new LogOnEvent());
+				await _events.PublishOnUIThreadAsync(new LogOnEvent());
 			}
 			catch (Exception ex)
 			{
