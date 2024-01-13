@@ -20,16 +20,18 @@ namespace TRMApi.Controllers
 
 		private readonly ApplicationDbContext applicationdbcontext;
 		private readonly UserManager<IdentityUser> userManager;
+		private readonly ILogger<UserController> logger;
 		private readonly IUserData userData;
 
 		#region CTOR
 		public UserController (ApplicationDbContext applicationdbcontext, 
 			UserManager<IdentityUser> userManager,
-			IConfiguration configuration,
+			ILogger<UserController> logger,
 			IUserData userData)
 		{
 			this.applicationdbcontext = applicationdbcontext;
 			this.userManager = userManager;
+			this.logger = logger;
 			this.userData = userData;
 		}
         #endregion
@@ -40,7 +42,7 @@ namespace TRMApi.Controllers
 		public IActionResult GetById()
 		{
 
-			string id = User.FindFirstValue(ClaimTypes.NameIdentifier); //RequestContext.Principal.Identity.GetUserId();
+			string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			UserModel result = userData.GetUserById(id);
 
 			if (String.IsNullOrWhiteSpace(result.Id))
@@ -97,7 +99,15 @@ namespace TRMApi.Controllers
 		public async Task<IActionResult> AddRole(UserRolePairModel request)
 		{
 			IdentityResult result;
+
+			string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			UserModel loggedInUser = userData.GetUserById(loggedInUserId);
+
 			IdentityUser user =  await userManager.FindByIdAsync(request.UserId);
+
+			logger.LogInformation("Admin {Admin} added user {User} to Role {Role}"
+				, loggedInUserId
+				, user.Id, request.RoleName);
 
 			result = await userManager.AddToRoleAsync(user, request.RoleName);
 
@@ -112,6 +122,13 @@ namespace TRMApi.Controllers
 			IdentityResult result;
 
 			IdentityUser user = await userManager.FindByIdAsync(request.UserId);
+			string loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+			logger.LogInformation("Admin {Admin} removed user {User} from Role {Role}"
+				, loggedInUserId
+				, user.Id, request.RoleName);
+
 			result = await userManager.RemoveFromRoleAsync(user, request.RoleName);
 
 			return Ok(result);

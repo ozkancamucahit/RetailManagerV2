@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace TRMDataManager.Library.Internal.DataAccess
 {
@@ -18,13 +19,15 @@ namespace TRMDataManager.Library.Internal.DataAccess
 		private IDbConnection _dbConnection;
 		private IDbTransaction _dbTransaction;
 		private readonly IConfiguration configuration;
+		private readonly ILogger<SQLDataAccess> logger;
 
 		#endregion
 
 		#region CTOR
-		public SQLDataAccess(IConfiguration configuration)
+		public SQLDataAccess(IConfiguration configuration, ILogger<SQLDataAccess> logger)
 		{
 			this.configuration = configuration;
+			this.logger = logger;
 		}
 		#endregion
 
@@ -156,9 +159,10 @@ namespace TRMDataManager.Library.Internal.DataAccess
 				{
 					CommitTransaction();
 				}
-				catch
+				catch(Exception ex)
 				{
 					//TODO : Log exception logic
+					logger.LogError(ex, " ==> COMMIT FAILED IN DISPOSE METHOD");
 				}
 			}
 
