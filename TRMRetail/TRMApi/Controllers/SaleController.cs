@@ -12,12 +12,12 @@ namespace TRMApi.Controllers
 	[Authorize]
 	public sealed class SaleController : ControllerBase
 	{
-		private readonly IConfiguration configuration;
+		private readonly ISaleData data;
 
 		#region CTOR
-		public SaleController(IConfiguration configuration)
+		public SaleController( ISaleData saleData)
         {
-			this.configuration = configuration;
+			this.data = saleData;
 		}
         #endregion
 
@@ -25,8 +25,7 @@ namespace TRMApi.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Post(SaleModel saleModel)
 		{
-			var data = new SaleData(configuration);
-			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); //RequestContext.Principal.Identity.GetUserId();
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
 
 			data.SaveSale(saleModel, userId);
 			return Ok(saleModel);
@@ -38,8 +37,7 @@ namespace TRMApi.Controllers
 		[HttpGet]
 		public IEnumerable<SaleReportModel> GetSalesReport()
 		{
-			var saleData = new SaleData(configuration);
-			return saleData.GetSaleReport();
+			return data.GetSaleReport();
 
 		}
 	}

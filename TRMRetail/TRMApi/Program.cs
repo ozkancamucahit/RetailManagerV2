@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using TRMDataManager.Library.DataAccess;
+using TRMDataManager.Library.Internal.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,16 @@ builder.Services
 	.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 	.AddRoles<IdentityRole>()
 	.AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Personal services
+
+builder.Services
+	.AddTransient<IInventoryData, InventoryData>()
+	.AddTransient<ISQLDataAccess, SQLDataAccess>()
+	.AddTransient<IProductData, ProductData>()
+	.AddTransient<IProductData, ProductData>()
+	.AddTransient<ISaleData, SaleData>()
+	.AddTransient<IUserData, UserData>();
 
 builder.Services.AddControllersWithViews();
 

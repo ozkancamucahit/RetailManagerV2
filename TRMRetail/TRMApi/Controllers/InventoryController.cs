@@ -11,12 +11,12 @@ namespace TRMApi.Controllers
 	[Authorize]
 	public sealed class InventoryController : ControllerBase
 	{
-		private readonly IConfiguration configuration;
+		private readonly IInventoryData inventoryData;
 
 		#region CTOR
-		public InventoryController(IConfiguration configuration)
+		public InventoryController( IInventoryData inventoryData)
         {
-			this.configuration = configuration;
+			this.inventoryData = inventoryData;
 		}
         #endregion
 
@@ -25,8 +25,6 @@ namespace TRMApi.Controllers
 		[HttpGet]
 		public IEnumerable<InventoryModel> Get()
 		{
-
-			var inventoryData = new InventoryData(configuration);
 			return inventoryData.GetInventory();
 
 		}
@@ -37,9 +35,7 @@ namespace TRMApi.Controllers
 		[HttpPost] 
 		public void Post(InventoryModel item) 
 		{  
-			InventoryData data = new InventoryData(configuration);
-
-			data.SaveInventoryRecord(item);
+			inventoryData.SaveInventoryRecord(item);
 		}
 
 	}

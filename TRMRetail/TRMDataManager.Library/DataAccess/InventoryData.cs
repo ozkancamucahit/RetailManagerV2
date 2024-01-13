@@ -5,28 +5,28 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-	public sealed class InventoryData
+	public sealed class InventoryData : IInventoryData
 	{
 		private readonly IConfiguration configuration;
+		private readonly ISQLDataAccess sql;
 
 		#region CTOR
-		public InventoryData(IConfiguration configuration)
-        {
-			this.configuration = configuration;
-		}
-        #endregion
-
-        public IEnumerable<InventoryModel> GetInventory()
+		public InventoryData(IConfiguration configuration, ISQLDataAccess sql)
 		{
-			var sql = new SQLDataAccess(configuration);
+			this.configuration = configuration;
+			this.sql = sql;
+		}
+		#endregion
 
-			var output = sql.LoadData<InventoryModel, dynamic>("[dbo].[spInventory_GetAll]", new {}, "TRMData");
+		public IEnumerable<InventoryModel> GetInventory()
+		{
+
+			var output = sql.LoadData<InventoryModel, dynamic>("[dbo].[spInventory_GetAll]", new { }, "TRMData");
 			return output;
 		}
 
 		public void SaveInventoryRecord(InventoryModel item)
 		{
-			var sql = new SQLDataAccess(configuration);
 
 			sql.SaveData("[dbo].[spInventoryInsert]", item, "TRMData");
 

@@ -9,26 +9,24 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-	public sealed class UserData
+	public sealed class UserData : IUserData
 	{
-		private readonly IConfiguration configuration;
+		private readonly ISQLDataAccess sql;
 
 		#region CTOR
-		public UserData(IConfiguration configuration)
-        {
-			this.configuration = configuration;
+		public UserData(ISQLDataAccess sql)
+		{
+			this.sql = sql;
 		}
-        #endregion
+		#endregion
 
-        public UserModel GetUserById(string id)
+		public UserModel GetUserById(string Id)
 		{
 			IEnumerable<UserModel> result = null;
 			try
 			{
-				SQLDataAccess sql = new SQLDataAccess(configuration);
-				var p = new { Id = id };
 
-				result = sql.LoadData<UserModel, dynamic>("dbo.spUserLookUp", p, "TRMData");
+				result = sql.LoadData<UserModel, dynamic>("dbo.spUserLookUp", new { Id }, "TRMData");
 			}
 			catch
 			{

@@ -11,24 +11,24 @@ using Microsoft.Extensions.Configuration;
 
 namespace TRMDataManager.Library.Internal.DataAccess
 {
-	internal sealed class SQLDataAccess :IDisposable
+	public sealed class SQLDataAccess : IDisposable, ISQLDataAccess
 	{
 
 		#region FIELDS
-			private IDbConnection _dbConnection;
-			private IDbTransaction _dbTransaction;
-			private readonly IConfiguration configuration;
+		private IDbConnection _dbConnection;
+		private IDbTransaction _dbTransaction;
+		private readonly IConfiguration configuration;
 
 		#endregion
 
 		#region CTOR
 		public SQLDataAccess(IConfiguration configuration)
-        {
+		{
 			this.configuration = configuration;
 		}
-        #endregion
+		#endregion
 
-        public string GetConnectionString(string name)
+		public string GetConnectionString(string name)
 		{
 			try
 			{
@@ -148,15 +148,15 @@ namespace TRMDataManager.Library.Internal.DataAccess
 			isClosed = true;
 		}
 
-        public void Dispose()
-        {
-            if (isClosed == false)
+		public void Dispose()
+		{
+			if (isClosed == false)
 			{
 				try
 				{
 					CommitTransaction();
 				}
-				catch 
+				catch
 				{
 					//TODO : Log exception logic
 				}
@@ -164,6 +164,6 @@ namespace TRMDataManager.Library.Internal.DataAccess
 
 			_dbTransaction = null;
 			_dbConnection = null;
-        }
-    }
+		}
+	}
 }

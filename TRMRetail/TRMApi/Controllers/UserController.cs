@@ -20,16 +20,17 @@ namespace TRMApi.Controllers
 
 		private readonly ApplicationDbContext applicationdbcontext;
 		private readonly UserManager<IdentityUser> userManager;
-		private readonly IConfiguration configuration;
+		private readonly IUserData userData;
 
 		#region CTOR
 		public UserController (ApplicationDbContext applicationdbcontext, 
 			UserManager<IdentityUser> userManager,
-			IConfiguration configuration)
+			IConfiguration configuration,
+			IUserData userData)
 		{
 			this.applicationdbcontext = applicationdbcontext;
 			this.userManager = userManager;
-			this.configuration = configuration;
+			this.userData = userData;
 		}
         #endregion
 
@@ -38,7 +39,6 @@ namespace TRMApi.Controllers
 		[Route("GetById")]
 		public IActionResult GetById()
 		{
-			var userData = new UserData(configuration);
 
 			string id = User.FindFirstValue(ClaimTypes.NameIdentifier); //RequestContext.Principal.Identity.GetUserId();
 			UserModel result = userData.GetUserById(id);
@@ -73,10 +73,6 @@ namespace TRMApi.Controllers
 
 				u.Roles = userRoles.Where(x => x.UserId == u.Id).ToDictionary(key => key.RoleId, val => val.Name);
 
-				//foreach (IdentityUserRole r in user.Roles)
-				//{
-				//	u.Roles.Add(r.RoleId, roles.Where(x => x.Id == r.RoleId).First().Name);
-				//}
 				output.Add(u);
 
 			}

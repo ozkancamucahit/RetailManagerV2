@@ -9,13 +9,13 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-	public sealed class ProductData
+	public sealed class ProductData : IProductData
 	{
-		private readonly IConfiguration configuration;
+		private readonly ISQLDataAccess sql;
 
-		public ProductData(IConfiguration configuration)
+		public ProductData( ISQLDataAccess sql)
 		{
-			this.configuration = configuration;
+			this.sql = sql;
 		}
 
 		public IEnumerable<ProductModel> GetProducts()
@@ -23,7 +23,6 @@ namespace TRMDataManager.Library.DataAccess
 			IEnumerable<ProductModel> result;
 			try
 			{
-				SQLDataAccess sql = new SQLDataAccess(configuration);
 
 				result = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetAll", new { }, "TRMData");
 			}
@@ -37,9 +36,8 @@ namespace TRMDataManager.Library.DataAccess
 
 		public ProductModel GetProductById(int id)
 		{
-			var sql = new SQLDataAccess(configuration);
 
-			var result = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetById", new { Id = id}, "TRMData").FirstOrDefault();
+			var result = sql.LoadData<ProductModel, dynamic>("dbo.spProduct_GetById", new { Id = id }, "TRMData").FirstOrDefault();
 			return result;
 		}
 	}
