@@ -12,12 +12,17 @@ namespace TRMApi.Controllers
 	{
 		private readonly ApplicationDbContext context;
 		private readonly UserManager<IdentityUser> userManager;
+		private readonly IConfiguration configuration;
 
 		#region CTOR
-		public TokenController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+		public TokenController(
+			ApplicationDbContext context,
+			UserManager<IdentityUser> userManager,
+			IConfiguration configuration)
         {
 			this.context = context;
 			this.userManager = userManager;
+			this.configuration = configuration;
 		}
 		#endregion
 
@@ -63,7 +68,7 @@ namespace TRMApi.Controllers
 			}
 
 			var credential = new SigningCredentials(
-						new SymmetricSecurityKey(Encoding.UTF8.GetBytes("this is my custom Secret key for authentication")),
+						new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Secrets:SecurityKey"))),
 						SecurityAlgorithms.HmacSha256);
 
 			var token = new JwtSecurityToken(
